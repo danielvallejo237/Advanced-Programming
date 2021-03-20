@@ -129,8 +129,7 @@ ll query(int begin, int end, int low=0, int high=-1, int node=0) {
   if (high < begin || low > end) return 0;
   if (low >= begin && high <= end) return segment_tree[node];
   ll mid = (low + high) / 2;
-  return query(begin, end, low, mid, left(node)) +
-      query(begin, end, mid + 1, high, right(node));
+  return query(begin, end, low, mid, left(node)) +query(begin, end, mid + 1, high, right(node));
 }
 
 //El ignore lca es para tomar o no en cuenta el minimo comun
