@@ -98,20 +98,13 @@ class UFDS //Esta es la estructura de datos que se va a usar para entontrar los 
     {
         if(!isSameSet(a,b))
         {
+            //cout<<"Making union"<<endl;
             //Asignamos el padre que tenga mayor rango, si hay empate lo desempatamos al final
-            ll p1=findSet(a);
-            ll p2=findSet(b);
-            if(rank[p2]<rank[p1])
-            {
-                parent[p2]=p1;
-            }
-            else
-            {
-                parent[p1]=p2;
-                if (rank[p1]==rank[p2]) rank[p1]++; 
-                /* Desempate de rangos, como asignamos como padre a p1 sobre p2 su rango 
-                debe de ser por tanto mayor al de p2*/
-            }
+            ll A=findSet(a);
+            ll B=findSet(b);
+            if(rank[A]<rank[B]) swap(A,B);
+            parent[B]=A;
+            if (rank[A]==rank[B]) rank[A]++; 
         }
     }
     void reset()
@@ -127,17 +120,46 @@ class UFDS //Esta es la estructura de datos que se va a usar para entontrar los 
 };
 
 
-void proccessBatches(vector<query> querys, vector<edge> aristas,ll N)
+void proccessBatches(vector<query> querys, vector<edge> aristas,ll N,ll M)
 {
     /*Procesamos los bloques de preguntas y para cada una de ellas usamos un 
     UFDS para hacer las actualizaciones, cada que cambiamos de bloque hacemos un reset del UFDS*/
-    cont=0; //Esto para contestar preguntas
+    ll cont=0; //Esto para contestar preguntas
     UFDS ufds(N); //Un UDFS de todos los elementos como disjuntos
+    //Las soluciones son del tamaño de las preguntas
+    vector<ll> solutions(querys.size());
     for (ll j=0;j<sqrt(aristas.size());j++)
     {
+        //En el caso de procesar los "Batch", hay que hacer reset de la estructura UFDS
+        /*Procesar cada uno de los "Batch" que contienen preguntas correspondientes 
+        a las aristas y a los rangos l,r*/
         ufds.reset();
-        
+        /*TO DO: Optimizar esta parte del código con el agoritmo de MO de calcular 
+        respuestas anteriores */
+        while(querys[cont].block==j)
+        {
+            if((int)(querys[cont].l)/(int)sqrt(M)==(int)(querys[cont].r)/(int)sqrt(M))
+            {
+                //Lo anterior significa que las preguntas están en el mismo bloque
+                for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                {
+                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                }
+                solutions[querys[cont].idx]=ufds.unique();
+                
+            }
+            else
+            {
+                for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                {
+                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                }
+                solutions[querys[cont].idx]=ufds.unique();
+            }
+            cont++;
+        }
     }
+    for(ll i=0;i<solutions.size();i++) cout<<solutions[i]<<endl;
 }
 
 int main()
@@ -159,29 +181,7 @@ int main()
         querys.pb(query(l,r,M,k));
     }
     sort(querys.begin(),querys.end());
-    //Las aristas y las consultas se dividieron en los bloques correctos 
-    /*
-    for(vector<query>::iterator it=querys.begin();it!=querys.end();++it) cout<<(*it).l<<" "<<(*it).r<<" "<<(*it).block<<" "<<(*it).idx<<endl;
-    // Prueba para que las consultas si se estén ordenando correctamente
-    */
-
-    /*
-    //Pruebas de las clases UFDS y query
-    ll N=4;
-    consultas.pb(query(0,1,N,0));
-    consultas.pb(query(0,0,N,1));
-    consultas.pb(query(0,2,N,2));
-    consultas.pb(query(2,3,N,3));
-    consultas.pb(query(1,3,N,4));
-    sort(consultas.begin(),consultas.end());
-    for(vector<query>::iterator it=consultas.begin();it!=consultas.end();++it) cout<<(*it).l<<" "<<(*it).r<<" "<<(*it).block<<endl;
-    UFDS union_find(10);
-    cout<<"Elementos unicos "<<union_find.unique()<<endl;
-    union_find.UnionSet(0,1);
-    union_find.UnionSet(3,1);
-    union_find.UnionSet(4,5);
-    cout<<"Elementos unicos despues de union "<<union_find.unique()<<endl;
-    union_find.reset();
-    cout<<"Elementos unicos despues de reset "<<union_find.unique()<<endl;*/ 
+    //vector<ll> sol(Q);
+    proccessBatches(querys,edges,N,M);
     return 0;
 }
