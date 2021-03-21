@@ -6,6 +6,7 @@ using namespace std;
 
 struct edge
 {
+    //Creación de la estructura arista que tiene el vértice de salida y el vértice de meta
     ll u,v;
     edge(ll u, ll v)
     {
@@ -14,6 +15,7 @@ struct edge
     }
     edge(){}
     ~edge(){}
+    //En caso de aplicar constructor vacío poder crear la arista despues
     void crear(ll u, ll v)
     {
         //En caso de inicializar una cosa vacía
@@ -23,6 +25,7 @@ struct edge
 };
 struct query
 {
+    //Consulta, tiene el left, right y el bloque al que pertenece dicha consulta
     ll l;
     ll r;
     ll block;
@@ -136,23 +139,53 @@ void proccessBatches(vector<query> querys, vector<edge> aristas,ll N,ll M)
         ufds.reset();
         /*TO DO: Optimizar esta parte del código con el agoritmo de MO de calcular 
         respuestas anteriores */
+        ll right=querys[cont].r;
         while(querys[cont].block==j)
         {
+             //En este right controlamos hasta donde se actualizó el UFDS para evitar dobles actualizaciones
             if((int)(querys[cont].l)/(int)sqrt(M)==(int)(querys[cont].r)/(int)sqrt(M))
             {
                 //Lo anterior significa que las preguntas están en el mismo bloque
-                for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                if (querys[cont].r>right)
                 {
-                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                    
+                    for(ll b=right;b<=querys[cont].r;b++)
+                    {
+                        ufds.UnionSet(aristas[b].u,aristas[b].v);
+                    }
+                    right=querys[cont].r;
                 }
-                solutions[querys[cont].idx]=ufds.unique();
-                
+                else if(querys[cont].r<right) continue; //Si es menor igual ya se actualizó, esto no pasa porque las querys están ordenadas 
+                else
+                {
+                    /*Esto es solo para el primer caso, en donde right=***.r 
+                    y donde solo se tiene que hacer un recorrido desde l hasta r de ahí en más es desde
+                    right hasta querys[cont].r*/
+                    for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                    {
+                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                    }
+                }
+                solutions[querys[cont].idx]=ufds.unique();  
             }
             else
             {
-                for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                if (querys[cont].r>right)
                 {
+                    
+                    for(ll b=right;b<=querys[cont].r;b++)
+                    {
+                        ufds.UnionSet(aristas[b].u,aristas[b].v);
+                    }
+                    right=querys[cont].r;
+                }
+                else if(querys[cont].r<right) continue; //Si es menor igual ya se actualizó, esto no pasa porque las querys están ordenadas 
+                else
+                {
+                    for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                    {
                     ufds.UnionSet(aristas[b].u,aristas[b].v);
+                    }
                 }
                 solutions[querys[cont].idx]=ufds.unique();
             }
