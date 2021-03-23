@@ -147,12 +147,12 @@ void solve_case(){
  
     forn(i, m){
         assert(scanf("%d%d", &e[i].X, &e[i].Y) == 2);
-        e[i].X--, e[i].Y--;
+        e[i].X, e[i].Y;
     }
     
     forn(i, q){
         assert(scanf("%d%d", &tmp[i].l, &tmp[i].r) == 2);
-        tmp[i].l--, tmp[i].r--, tmp[i].idx = i;
+        tmp[i].l, tmp[i].r, tmp[i].idx = i;
     }
     
     sort(tmp, tmp + q, cmp);
@@ -210,7 +210,8 @@ int main() {
     #endif
     
     int t;
-    assert(scanf("%d", &t) == 1);
+    //assert(scanf("%d", &t) == 1);
+    t=1;
     forn(ti, t){
         solve_case();
     }

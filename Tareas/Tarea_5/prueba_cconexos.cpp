@@ -75,7 +75,7 @@
     	cin.tie(0);
      
     	int t;
-    	cin >> t;
+    	t=1;
      
     	while (t--) {
      
@@ -85,11 +85,16 @@
     		int sqt = sqrt(n);
      
     		for (int i = 0; i < n; i++) pai[i] = i, w[i] = 0;
-    		for (int i = 0; i < m; i++) cin >> v[i].ff >> v[i].ss;
+    		for (int i = 0; i < m; i++) 
+			{
+				cin >> v[i].ff >> v[i].ss;
+				v[i].ff--, v[i].ss--;
+			}
      
     		for (int i = 0; i < q; i++) {
      
-    			cin >> qr[i].l >> qr[i].r;
+    			cin >> qr[i].l>> qr[i].r;
+				qr[i].l--, qr[i].r--;
     			qr[i].bk = qr[i].l/sqt;
     			qr[i].id = i;
     		}
