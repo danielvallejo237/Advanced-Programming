@@ -46,8 +46,8 @@ struct query
     {
         /*Esta redefinición del operador < permite llamar la función sort para ordenar las 
         consultas de acuerdo a los valores de l y r*/
-        if(l<consulta.l) return true;
-        else if(l==consulta.l)
+        if(block<consulta.block) return true;
+        else if(block==consulta.block)
         {
             return (r<consulta.r);
             //Si las l son iguales entonces nos fijamos en la parte derecha para ordenar
@@ -120,6 +120,17 @@ class UFDS //Esta es la estructura de datos que se va a usar para entontrar los 
             parent[i]=i;
         }
     }
+    void detatch(ll index, ll index2)
+    {
+        /*La función detatch lo que hace es desconectar 
+        las uniones del conjunto, después del detatch debemos de hacer union
+        en la arista faltante*/ 
+        if(index>=0 && index <size())
+        {
+            parent[index]=index; //Los desconectamos haciendo que el padre de cada uno de los elementos de las aristas sean ellos mismos
+            parent[index2]=index2;
+        }
+    }
 };
 
 
@@ -140,52 +151,74 @@ void proccessBatches(vector<query> querys, vector<edge> aristas,ll N,ll M)
         /*TO DO: Optimizar esta parte del código con el agoritmo de MO de calcular 
         respuestas anteriores */
         ll right=querys[cont].r;
+        ll left=querys[cont].l;
+        ll comp_conexa=ufds.size();
+        //cout<<"Entering batch "<<j<<endl;
         while(querys[cont].block==j)
         {
              //En este right controlamos hasta donde se actualizó el UFDS para evitar dobles actualizaciones
             if((int)(querys[cont].l)/(int)sqrt(M)==(int)(querys[cont].r)/(int)sqrt(M))
             {
                 //Lo anterior significa que las preguntas están en el mismo bloque
-                if (querys[cont].r>right)
+                if(left>querys[cont].l)
                 {
-                    
-                    for(ll b=right;b<=querys[cont].r;b++)
+                    //Encontrar una forma de deshacer operaciones de union en el ufds
+                    for(ll i=querys[cont].l;i<=left;i++)
                     {
-                        ufds.UnionSet(aristas[b].u,aristas[b].v);
+                        ufds.detatch(aristas[i].u,aristas[i].v);
                     }
+                    left=querys[cont].l;
+                }
+                if(left==querys[cont].l)
+                {
+                    left=querys[cont].l;
                     right=querys[cont].r;
-                }
-                else if(querys[cont].r<right) continue; //Si es menor igual ya se actualizó, esto no pasa porque las querys están ordenadas 
-                else
+                } //Do nothing function
+                if(left<querys[cont].l)
                 {
-                    /*Esto es solo para el primer caso, en donde right=***.r 
-                    y donde solo se tiene que hacer un recorrido desde l hasta r de ahí en más es desde
-                    right hasta querys[cont].r*/
-                    for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                    set<ll> detatched;
+                    for(ll i=left;i<=querys[cont].l;i++)
                     {
-                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                        ufds.detatch(aristas[i].u,aristas[i].v);
                     }
+                    left=querys[cont].l;
                 }
-                solutions[querys[cont].idx]=ufds.unique();  
+                for(ll k=querys[cont].l;k<=querys[cont].r;k++)
+                {
+                    right=querys[cont].r;
+                    ufds.UnionSet(aristas[k].u,aristas[k].v);
+                }
+                solutions[querys[cont].idx]=ufds.unique();
             }
             else
             {
-                if (querys[cont].r>right)
+                if(left>querys[cont].l)
                 {
-                    
-                    for(ll b=right;b<=querys[cont].r;b++)
+                    //Encontrar una forma de deshacer operaciones de union en el ufds
+                    for(ll i=querys[cont].l;i<=left;i++)
                     {
-                        ufds.UnionSet(aristas[b].u,aristas[b].v);
+                        ufds.detatch(aristas[i].u,aristas[i].v);
                     }
-                    right=querys[cont].r;
+                    left=querys[cont].l;
                 }
-                else if(querys[cont].r<right) continue; //Si es menor igual ya se actualizó, esto no pasa porque las querys están ordenadas 
-                else
+                if(left==querys[cont].l)
                 {
-                    for(ll b=querys[cont].l;b<=querys[cont].r;b++)
+                    left=querys[cont].l;
+                    right=querys[cont].r;
+                } //Do nothing function
+                if(left<querys[cont].l)
+                {
+                    set<ll> detatched;
+                    for(ll i=left;i<=querys[cont].l;i++)
                     {
-                    ufds.UnionSet(aristas[b].u,aristas[b].v);
+                        ufds.detatch(aristas[i].u,aristas[i].v);
                     }
+                    left=querys[cont].l;
+                }
+                for(ll k=querys[cont].l;k<=querys[cont].r;k++)
+                {
+                    right=querys[cont].r;
+                    ufds.UnionSet(aristas[k].u,aristas[k].v);
                 }
                 solutions[querys[cont].idx]=ufds.unique();
             }
@@ -214,7 +247,7 @@ int main()
         querys.pb(query(l,r,M,k));
     }
     sort(querys.begin(),querys.end());
-    //vector<ll> sol(Q);
+    //for(vector<query>::iterator it=querys.begin();it!=querys.end();++it) cout<<(*it).block<<" "<<(*it).l<<(*it).r<<endl;
     proccessBatches(querys,edges,N,M);
     return 0;
 }
