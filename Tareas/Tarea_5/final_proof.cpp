@@ -6,7 +6,6 @@ using namespace std;
 #define pb(a) push_back(a)
 #define MAXQ 50005 //Todos los datos están acotados por el valor de 50000
 
-
 struct edge
 {
     //Creación de la estructura arista que tiene el vértice de salida y el vértice de meta
@@ -97,7 +96,7 @@ bool UnionSet(ll a, ll b,bool flag)
 
 }
 
-void reset( ll N,vector<ll> ufds)
+void reset(ll N,vector<ll> ufds)
 {
     for(ll i=0;i<N;i++) ufds[i]=i;
 }
@@ -107,7 +106,7 @@ int main()
     ll N,M,Q;
     cin>>N>>M>>Q;
     //Checamos que se respeten las constantes
-    //assert(N>0 && N<=50000 && M>0 && M<=50000 && Q>0 && Q<=50000);
+    assert(N>0 && N<=50000 && M>0 && M<=50000 && Q>0 && Q<=50000);
     rango.assign(N,0);
     reset(N,parent);
     for(ll j=0;j<M;j++)
