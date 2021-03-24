@@ -3,13 +3,13 @@
 using namespace std;
 
 #define ll long long int
-#define pb(a) push_back(a)
-#define MAXQ 50005 //Todos los datos están acotados por el valor de 50000
-
+#define pb push_back
+#define MAXQ 50005 //Todos los datos estan acotados por el valor de 50000
+#define mp make_pair
 
 struct edge
 {
-    //Creación de la estructura arista que tiene el vértice de salida y el vértice de meta
+    //Creacion de la estructura arista que tiene el vertice de salida y el vertice de meta
     ll u,v;
     edge(ll u, ll v)
     {
@@ -18,10 +18,10 @@ struct edge
     }
     edge(){}
     ~edge(){}
-    //En caso de aplicar constructor vacío poder crear la arista despues
+    //En caso de aplicar constructor vacio poder crear la arista despues
     void crear(ll u, ll v)
     {
-        //En caso de inicializar una cosa vacía
+        //En caso de inicializar una cosa vacia
         this->u=u;
         this->v=v;
     }
@@ -34,38 +34,41 @@ struct query
         this->l=l;
         this->r=r;
         this->idx=idx;
-        this->block=l/sqrt(N);
+        this->block=(ll)l/(ll)sqrt(N);
     }
     query(){} //Constructores que no hacen nada
     ~query(){}
-    bool operator < (const query& cons) const
+    bool operator < (const query& cons)
     {
-        //Ordenamos por bloque primero y después ordenamos por el valor de 
-        //r 
+        //Ordenamos por bloque primero y despues ordenamos por el valor de
+        //r
         if(block==cons.block) return r<cons.r;
         return block<cons.block;
     }
 };
 
-typedef pair<ll,pair<ll,ll> > iedg; //Arista indexada en esta guardaremos el padre del conjunto así
+typedef pair<ll,pair<ll,ll> > iedg; //Arista indexada en esta guardaremos el padre del conjunto asi
 //como su rango
 
 vector<query> querys(MAXQ);
-vector<edge> edges(MAXQ); 
+vector<edge> edges(MAXQ);
 vector<ll> parent(MAXQ);
 vector<ll> rango(MAXQ);
 vector<iedg> aux(MAXQ);
 
-vector<ll> solutions(MAXQ); //Aquí se guardan la soluciones finales al problema
+vector<ll> solutions(MAXQ); //Aqui se guardan la soluciones finales al problema
+
+
+namespace UFDS{
 
 ll findSet(ll a, bool flag)
 {
     if (parent[a]==a) return a;
-    if (flag) aux.pb(make_pair(a,make_pair(parent[a],rango[a])));
+    if (flag) aux.pb(mp(a,mp(parent[a],rango[a])));
     return parent[a]=findSet(parent[a],flag);
 }
 
-/*Al union set solo le hacemos una peueña modificación ahora con un bool, y en el aux metemos las 
+/*Al union set solo le hacemos una peuena modificacion ahora con un bool, y en el aux metemos las
  conjuntos, el padre al que pertenece y el rango de dicho elemento, esto con el fin de deshacer operaciones*/
 
 bool UnionSet(ll a, ll b,bool flag)
@@ -75,20 +78,20 @@ bool UnionSet(ll a, ll b,bool flag)
     if(a==b) return false;
     if(rango[a]>rango[b])
     {
-        if (flag) aux.pb(make_pair(b,make_pair(parent[b],rango[b])));
+        if (flag) aux.pb(mp(b,mp(parent[b],rango[b])));
         parent[b]=a;
     }
     else if (rango[a]<rango[b])
     {
-        if (flag) aux.pb(make_pair(a,make_pair(parent[a],rango[a])));
+        if (flag) aux.pb(mp(a,mp(parent[a],rango[a])));
         parent[a]=b;
     }
     else
     {
         if(flag)
         {
-            aux.pb(make_pair(b,make_pair(parent[b],rango[b])));
-            aux.pb(make_pair(a,make_pair(parent[a],rango[a])));
+            aux.pb(mp(b,mp(parent[b],rango[b])));
+            aux.pb(mp(a,mp(parent[a],rango[a])));
         }
         parent[b]=a;
         rango[a]++;
@@ -96,10 +99,11 @@ bool UnionSet(ll a, ll b,bool flag)
     return true;
 
 }
+}
 
 void reset( ll N,vector<ll> ufds)
 {
-    for(ll i=0;i<N;i++) ufds[i]=i;
+    for(ll i=1;i<=N;i++) ufds[i]=i;
 }
 
 int main()
@@ -107,13 +111,15 @@ int main()
     ll N,M,Q;
     cin>>N>>M>>Q;
     //Checamos que se respeten las constantes
-    //assert(N>0 && N<=50000 && M>0 && M<=50000 && Q>0 && Q<=50000);
-    rango.assign(N,0);
+    assert(N>0 && N<=50000 && M>0 && M<=50000 && Q>0 && Q<=50000);
+    rango.assign(N+1,0);
     reset(N,parent);
-    for(ll j=0;j<M;j++)
+    for(ll j=1;j<=M;j++)
     {
         ll s,e;
         cin>>s>>e;
+        s++;
+        e++;
         edges[j]=edge(s,e);
     }
     //cout<<"edges added"<<endl;
@@ -122,22 +128,20 @@ int main()
     {
         ll l,r;
         cin>>l>>r;
+        l++;
+        r++;
         querys[k]=query(l,r,k,N);
     }
-    //for(ll i=0;i<Q;i++) cout<<querys[i].l<<" "<<querys[i].r<<" "<<querys[i].block<<endl;
     sort(querys.begin(),querys.begin()+Q);
     /*
         ## NOTA MENTAL ##
-        En el assing se asigna primero cuantos y después el valor que se asignara en 
-        dichas posiciones, no al revés 
-        */
-    
-    //for(ll i=0;i<Q;i++) cout<<querys[i].l<<" "<<querys[i].r<<" "<<querys[i].block<<endl;
-
+        En el assing se asigna primero cuantos y despues el valor que se asignara en
+        dichas posiciones, no al reves
+    */
     ll raiz=sqrt(N);
     //cout<<raiz<<endl;
     ll ans = N, lans = N;
-    ll lbk = -1, cl = 1, cr = 0; 
+    ll lbk = -1, cl = 1, cr = 0;
     /*Left block es el bloque de la izquierda, los cl y cr son los contadores hacia la derecha y hacia la izquierda*/
     for(int i=0;i<Q;i++)
     {
@@ -151,38 +155,38 @@ int main()
             cr = cl-1;
             lans = N;
             ans = N;
-            for (int i = 0; i < N; i++) parent[i] = i, rango[i] = i;
+            for (int i = 1; i <= N; i++) parent[i] = i, rango[i] = i;
             lbk = bloque;
         }
-        if (right/raiz == bloque) 
+        if (right/raiz == bloque)
         {
             cl = left, cr = left-1;
-            while (cr < right) 
+            while (cr < right)
             {
     		    ++cr;
-    			if (UnionSet(edges[cr].u, edges[cr].v, 1)) ans--;
+    			if (UFDS::UnionSet(edges[cr].u, edges[cr].v, 1)) ans--;
     		}
     		solutions[indice] = ans;
     		cl = (bloque+1)*raiz;
     		cr = cl-1;
         }
-        else 
+        else
         {
-            while (cr < right) 
+            while (cr < right)
             {
                 ++cr;
-                if (UnionSet(edges[cr].u, edges[cr].v, 0)) ans--;
-    		}
+                if (UFDS::UnionSet(edges[cr].u, edges[cr].v, 0)) ans--;
+    		        }
             lans = ans;
-            while (cl > left) 
-            {     
+            while (cl > left)
+            {
                 --cl;
-                if (UnionSet(edges[cl].u, edges[cl].v, 1)) ans--;
+                if (UFDS::UnionSet(edges[cl].u, edges[cl].v, 1)) ans--;
             }
             solutions[indice] = ans;
             cl = (bloque+1)*raiz;
     	}
-        for (int i = aux.size()-1; i >= 0; i--) 
+        for (int i = aux.size()-1; i >= 0; i--)
         {
 		    ll at = aux[i].first;
             ll p = aux[i].second.first;
