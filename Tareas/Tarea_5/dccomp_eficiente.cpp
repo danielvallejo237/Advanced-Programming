@@ -1,3 +1,7 @@
+/*TAREA 5: Programación Avanzada 
+@Author Daniel Vallejo Aldana 
+Solución al problema DCCOMP*/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -103,23 +107,21 @@ bool UnionSet(ll a, ll b,bool flag)
 
 void reset( ll N,vector<ll> ufds)
 {
-    for(ll i=1;i<=N;i++) ufds[i]=i;
+    for(ll i=1;i<N;i++) ufds[i]=i;
 }
 
 int main()
 {
     ll N,M,Q;
     cin>>N>>M>>Q;
-    //Checamos que se respeten las constantes
+    //Checamos que se respeten las restricciones
     assert(N>0 && N<=50000 && M>0 && M<=50000 && Q>0 && Q<=50000);
     rango.assign(N+1,0);
     reset(N,parent);
-    for(ll j=1;j<=M;j++)
+    for(ll j=0;j<M;j++)
     {
         ll s,e;
         cin>>s>>e;
-        s++;
-        e++;
         edges[j]=edge(s,e);
     }
     //cout<<"edges added"<<endl;
@@ -128,8 +130,6 @@ int main()
     {
         ll l,r;
         cin>>l>>r;
-        l++;
-        r++;
         querys[k]=query(l,r,k,N);
     }
     sort(querys.begin(),querys.begin()+Q);
@@ -141,7 +141,7 @@ int main()
     ll raiz=sqrt(N);
     //cout<<raiz<<endl;
     ll ans = N, lans = N;
-    ll lbk = -1, cl = 1, cr = 0;
+    ll lbk = -2, cl = 0, cr = -1;
     /*Left block es el bloque de la izquierda, los cl y cr son los contadores hacia la derecha y hacia la izquierda*/
     for(int i=0;i<Q;i++)
     {
@@ -155,7 +155,7 @@ int main()
             cr = cl-1;
             lans = N;
             ans = N;
-            for (int i = 1; i <= N; i++) parent[i] = i, rango[i] = i;
+            for (int i = 0; i < N; i++) parent[i] = i, rango[i] = i;
             lbk = bloque;
         }
         if (right/raiz == bloque)
