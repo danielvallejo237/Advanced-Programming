@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 #define ll long long
-
 bool binary_search(vector<ll> a, ll l, ll r,ll x)
 {
     ll mid=(l+r)/2;

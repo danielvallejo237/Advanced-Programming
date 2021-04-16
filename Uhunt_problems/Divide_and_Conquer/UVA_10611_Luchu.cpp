@@ -25,27 +25,26 @@ void process_query(ll height, vector<ll> personas, vector<ll> reversa)
 }
 int main()
 {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
+    ios_base::sync_with_stdio(false);
     //Desactivar la sincronización con el stdio
     ll ladys;
-    scanf("%lld",&ladys);
+    cin>>ladys;
     vector<ll> sujetos;
      vector<ll> reversed(ladys);
     for (ll i=0;i<ladys;i++)
     {
         ll subj;
-        scanf("%lld",&subj);
+        cin>>subj;
         sujetos.pb(subj);
         reversed[ladys-1-i]=-subj;
     }
     ll querys;
-    scanf("%lld",&querys);
+    cin>>querys;
     vector<ll> alturas;
     for (ll i=0;i<querys;i++)
     {
         ll altura;
-        scanf("%lld",&altura);
+        cin>>altura;
         alturas.pb(altura);
         
     }
