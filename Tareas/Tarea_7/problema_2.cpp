@@ -120,7 +120,7 @@ int main()
         prop=ulam::getProportion(cnt);
         cnt++;
     }
-    cout<<"N deseada: "<<2*(cnt-1)+1<<endl;
+    cout<<"N deseada: "<<cnt-1<<endl;
     //cout<<ulam::getProportion(21)<<endl;
     return 0;
 }
