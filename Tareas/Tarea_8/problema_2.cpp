@@ -68,6 +68,10 @@ int main()
 {
     string s1,s2;
     cin>>s1>>s2;
+    if(s1.size()>s2.size())
+    {
+        swap(s1,s2);
+    }
     int p=MaximoCosto(s1,s2);
     cout<<"Ganancia Máxima: "<<p<<endl;
     return 0;

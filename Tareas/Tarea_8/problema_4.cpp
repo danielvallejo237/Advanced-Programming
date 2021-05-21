@@ -64,6 +64,10 @@ int main()
 {
     string A,B;
     cin>>A>>B;
+    if(A.size()>B.size())
+    {
+        swap(A,B);
+    }
     cout<<"Hotcakes a quitar: "<<PilaHotCakes(A,B)<<endl;
     return 0;
 }
