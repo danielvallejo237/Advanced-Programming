@@ -60,7 +60,7 @@ int MaximoCosto(string A, string B)
             lower_bound=(cost > lower_bound) ? cost : lower_bound; //Vamos actualizando el costo en cada uno de los renglones
         }
     }
-    //printMat(MT);
+    printMat(MT);
     return lower_bound;
 }
 
