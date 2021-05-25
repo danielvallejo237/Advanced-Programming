@@ -60,7 +60,7 @@ int MaximoCosto(string A, string B)
             lower_bound=(cost > lower_bound) ? cost : lower_bound; //Vamos actualizando el costo en cada uno de los renglones
         }
     }
-    //printMat(MT);
+    printMat(MT);
     return lower_bound;
 }
 
@@ -68,6 +68,10 @@ int main()
 {
     string s1,s2;
     cin>>s1>>s2;
+    if(s1.size()>s2.size())
+    {
+        swap(s1,s2);
+    }
     int p=MaximoCosto(s1,s2);
     cout<<"Ganancia Máxima: "<<p<<endl;
     return 0;
