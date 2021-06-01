@@ -83,6 +83,8 @@ int findOcurrences(const string &text, const string &pattern)
 {
     fill(resets.begin(),resets.end(),0);
     kmpProcessPattern(pattern);
+    for(int i=0;i<pattern.size();i++) cout<<resets[i]<<" ";
+    cout<<endl;
     int counts=kmpfindPattern(text,pattern);
     return counts;
 }
@@ -91,7 +93,7 @@ int findOcurrences(const string &text, const string &pattern)
 int main()
 {
     string s="AABAACAABAA";
-    string s2="AAB";
+    string s2="bababa";
     int cnt=findOcurrences(s,s2);
     cout<<"Ocurrencias de la cadena "+ s2 +" en la cadena "+s+ ": "<<cnt<<endl;
     return 0;

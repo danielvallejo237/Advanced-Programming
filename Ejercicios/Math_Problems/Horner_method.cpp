@@ -21,10 +21,10 @@ int main()
 {
 	vector<double> coef;
 	coef.push_back(2.0);
-	coef.push_back(1.0);
-	coef.push_back(1.0);
+	coef.push_back(3.3);
+	coef.push_back(5.0);
 	int n=coef.size();
-	cout<<Horner(coef,n,2.0)<<endl;
+	cout<<Horner(coef,n,4.0)<<endl;
 	return 0;
 }
 
